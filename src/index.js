@@ -1,44 +1,49 @@
 import './css/styles.css';
-import './fetchCountries.js';
-import debounce from 'lodash.debounce';
+import API from './fetchCountries';
+import getRefs from './get-refs';
+import Debounce from 'lodash.debounce';
 
 const DEBOUNCE_DELAY = 300;
 
-const refs = {
-  inputEl: document.querySelector('#search-box'),
-  countryListEl: document.querySelector('.country-list'),
-  countryInfoEl: document.querySelector('.country-info'),
-};
+const refs = getRefs();
 
-// refs.inputEl.addEventListener(
-//   'input', onSearch
+refs.inputEl.addEventListener('input', onSearch);
 
-//   debounce(fetchCountries, DEBOUNCE_DELAY)
-// );
+Debounce(onSearch, DEBOUNCE_DELAY);
 
-// function onSearch(event) {
-//     event.preventDefault();
+function onSearch(event) {
+  event.preventDefault();
 
+  const form = event.currentTarget;
+  const searchQuery = form.elements.query.value;
 
-// const form = event.currentTarget;
-// const searchQuery = form.elements.query.value;
+  API.fetchCountries(searchQuery)
+    .then({ renderCountryList, renderCountryInfo })
+    .catch(onFetchError)
+    .finally(() => form.reset());
+}
 
+function renderCountryList(country) {
+  const markupList = countryListTpl(country);
+  refs.countryListEl.innerHTML = markupList;
+}
 
-//   fetchCountries('ukraine')
-//     .then({ renderCountryList, renderCountryInfo })
-//     .catch(error => {
-//       console.log(error);
-//     })
-//     .finally(() => form.reset());
-// }
+function renderCountryInfo(country) {
+  const markupInfo = countryInfoTpl(country);
+  refs.countryInfoEl.innerHTML = markupInfo;
+}
+
+function onFetchError(error) {
+  alert(`Country not found`);
+}
 
 {
-//   <li class="country-list_item">
-//       <div>
-//         <img src="{{flags.svg}}" alt="flag" />
-//         {{name.oficial}}
-//       </div>
-//     </li>
+  //   <li class="country-list_item">
+  //       <div>
+  //         <img src="{{flags.svg}}" alt="flag" />
+  //         {{name.oficial}}
+  //       </div>
+  //     </li>
 }
 
 {
