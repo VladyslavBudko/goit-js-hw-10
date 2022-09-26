@@ -15,17 +15,16 @@ function onSearch(event) {
   event.preventDefault();
 
   const form = event.target;
-  console.log(form.value);
   const searchQuery = form.value;
 
-//   renderCountryInfo(searchQuery)
   API.fetchCountries(searchQuery)
     .then(renderCountryList)
     .catch(onFetchError)
-    // .finally(() => form.reset());
+    .finally(() => console.log(`Ищем ,${searchQuery}`));
 }
 
 function renderCountryList(country) {
+
   const markupList = countryListTpl(country);
   refs.countryListEl.innerHTML = markupList;
 }
@@ -40,13 +39,15 @@ function onFetchError(error) {
 }
 
 function countryListTpl(country) {
-  country[0]
+
+  return country
     .map(({ flags, name }) => {
-      return `<li class="country-list_item">
-        <div>
-          <img src="${flags.svg}" alt="flag" />
-          ${name.oficial}
-        </div>
+      return `
+      <li class="country-list_item" 
+      style="list-style:none; margin-bottom:20px; 
+      display:flex; align-items: center;">
+          <img style="max-width:10%" src="${flags.svg}" alt="${name.official}" />
+          <div>${name.official}</div>
       </li>`;
     })
     .join('');
