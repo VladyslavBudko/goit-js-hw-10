@@ -14,13 +14,15 @@ Debounce(onSearch, DEBOUNCE_DELAY);
 function onSearch(event) {
   event.preventDefault();
 
-  const form = event.currentTarget;
-  const searchQuery = form.elements.query.value;
+  const form = event.target;
+  console.log(form.value);
+  const searchQuery = form.value;
 
+//   renderCountryInfo(searchQuery)
   API.fetchCountries(searchQuery)
-    .then({ renderCountryList, renderCountryInfo })
+    .then(renderCountryList)
     .catch(onFetchError)
-    .finally(() => form.reset());
+    // .finally(() => form.reset());
 }
 
 function renderCountryList(country) {
@@ -37,29 +39,37 @@ function onFetchError(error) {
   alert(`Country not found`);
 }
 
-{
-  //   <li class="country-list_item">
-  //       <div>
-  //         <img src="{{flags.svg}}" alt="flag" />
-  //         {{name.oficial}}
-  //       </div>
-  //     </li>
+function countryListTpl(country) {
+  country[0]
+    .map(({ flags, name }) => {
+      return `<li class="country-list_item">
+        <div>
+          <img src="${flags.svg}" alt="flag" />
+          ${name.oficial}
+        </div>
+      </li>`;
+    })
+    .join('');
 }
 
-{
-  /* <li class="country-info_item">
+function countryInfoTpl(country) {
+  country
+    .map(({ capital, population, languages }) => {
+      return `<li class="country-info_item">
   <div>
-    <p class="capital">Capital: {{capital}}</p>
-    <p class="population">Population: {{population}}</p>
+    <p class="capital">Capital: ${capital}</p>
+    <p class="population">Population: ${population}</p>
     <p class="languages">Languages: 
       <ul class="languages-list">
         {{#each}}
-          <li class="languages-item">{{#each languages}}</li>
+          <li class="languages-item">${languages}</li>
         {{/#each}}
       </ul>
     </p>
   </div>
-</li> */
+</li>`;
+    })
+    .join('');
 }
 
 //Тебе нужны только следующие свойства:
