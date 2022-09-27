@@ -68,19 +68,14 @@ function countryListTpl(country) {
 }
 
 function countryInfoTpl(country) {
-  console.log(country);
-  const languagesAll = Object.values(country[0].languages).join(',');
+  const languagesAll = Object.values(country[0].languages).join(', ');
 
   return country
     .map(({ capital, population }) => {
       return `
     <p class="capital">Capital: ${capital}</p>
     <p class="population">Population: ${population}</p>
-    <p class="languages">Languages: 
-      <ul class="languages-list">
-          <li class="languages-item">${languagesAll}</li>
-      </ul>
-    </p>`;
+    <p class="languages">Languages: ${languagesAll}</p>`;
     })
     .join('');
 }
