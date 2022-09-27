@@ -1,29 +1,44 @@
 import './css/styles.css';
 import API from './fetchCountries';
 import getRefs from './get-refs';
-import Debounce from 'lodash.debounce';
+import debounce from 'lodash.debounce';
+import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
-
 const refs = getRefs();
 
-refs.inputEl.addEventListener('input', onSearch);
-
-Debounce(onSearch, DEBOUNCE_DELAY);
+refs.inputEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(event) {
   event.preventDefault();
 
   const form = event.target;
-  const searchQuery = form.value;
+  const searchQuery = form.value.trim();
+
+  if (!searchQuery) {
+    refs.countryListEl.innerHTML = '';
+    refs.countryInfoEl.innerHTML = '';
+    return;
+  }
 
   API.fetchCountries(searchQuery)
-    .then(renderCountryList)
-    .catch(onFetchError)
-    .finally(() => console.log(`Ищем ,${searchQuery}`));
+    .then(country => {
+      if (country.length !== 1) {
+        refs.countryInfoEl.innerHTML = '';
+        return renderCountryList(country);
+      }
+      renderCountryInfo(country);
+      renderCountryList(country);
+    })
+    .catch(onFetchError);
 }
 
 function renderCountryList(country) {
+  if (country.length > 10) {
+    return Notiflix.Notify.info(
+      'Too many matches found. Please enter a more specific name.'
+    );
+  }
 
   const markupList = countryListTpl(country);
   refs.countryListEl.innerHTML = markupList;
@@ -35,18 +50,17 @@ function renderCountryInfo(country) {
 }
 
 function onFetchError(error) {
-  alert(`Country not found`);
+  Notiflix.Notify.failure('Oops, there is no country with that name');
 }
 
 function countryListTpl(country) {
-
   return country
     .map(({ flags, name }) => {
       return `
       <li class="country-list_item" 
       style="list-style:none; margin-bottom:20px; 
       display:flex; align-items: center;">
-          <img style="max-width:10%" src="${flags.svg}" alt="${name.official}" />
+          <img style="max-width:10%; margin-right:20px" src="${flags.svg}" alt="${name.official}" />
           <div>${name.official}</div>
       </li>`;
     })
@@ -54,29 +68,19 @@ function countryListTpl(country) {
 }
 
 function countryInfoTpl(country) {
-  country
-    .map(({ capital, population, languages }) => {
-      return `<li class="country-info_item">
-  <div>
+  console.log(country);
+  const languagesAll = Object.values(country[0].languages).join(',');
+
+  return country
+    .map(({ capital, population }) => {
+      return `
     <p class="capital">Capital: ${capital}</p>
     <p class="population">Population: ${population}</p>
     <p class="languages">Languages: 
       <ul class="languages-list">
-        {{#each}}
-          <li class="languages-item">${languages}</li>
-        {{/#each}}
+          <li class="languages-item">${languagesAll}</li>
       </ul>
-    </p>
-  </div>
-</li>`;
+    </p>`;
     })
     .join('');
 }
-
-//Тебе нужны только следующие свойства:
-
-// name.official - полное имя страны
-// capital - столица
-// population - население
-// flags.svg - ссылка на изображение флага
-// languages - массив языков
