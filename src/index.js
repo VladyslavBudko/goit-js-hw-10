@@ -73,10 +73,11 @@ function countryInfoTpl(country) {
 
   return country
     .map(({ capital, population }) => {
-      return `
+      return `<div style="padding-left:40px">
     <p class="capital">Capital: ${capital}</p>
     <p class="population">Population: ${population}</p>
-    <p class="languages">Languages: ${languagesAll}</p>`;
+    <p class="languages">Languages: ${languagesAll}</p>
+    </div>`;
     })
     .join('');
 }
