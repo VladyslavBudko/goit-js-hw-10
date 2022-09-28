@@ -1,8 +1,7 @@
 import './css/styles.css';
-import { fetchCountries } from './fetchCountries';
+import { fetchCountries, onFetchError } from './fetchCountries';
 import getRefs from './get-refs';
 import debounce from 'lodash.debounce';
-import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 const refs = getRefs();
@@ -49,9 +48,9 @@ function renderCountryInfo(country) {
   refs.countryInfoEl.innerHTML = markupInfo;
 }
 
-function onFetchError(error) {
-  Notiflix.Notify.failure('Oops, there is no country with that name');
-}
+// function onFetchError(error) {
+//   Notiflix.Notify.failure('Oops, there is no country with that name');
+// }
 
 function countryListTpl(country) {
   return country

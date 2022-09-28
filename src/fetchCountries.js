@@ -1,4 +1,5 @@
-export { fetchCountries };
+import Notiflix from 'notiflix';
+export { fetchCountries, onFetchError };
 
 function fetchCountries(name) {
   const base_url = `https://restcountries.com/v3.1/name/${name}`;
@@ -6,7 +7,7 @@ function fetchCountries(name) {
   return fetch(base_url + filter_url)
     .then(response => {
       if (!response.ok) {
-        onFetchError;
+       return onFetchError;
       }
       return response.json();
     })
