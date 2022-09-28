@@ -2,6 +2,8 @@ import './css/styles.css';
 import { fetchCountries, onFetchError } from './fetchCountries';
 import getRefs from './get-refs';
 import debounce from 'lodash.debounce';
+import Notiflix from 'notiflix';
+
 
 const DEBOUNCE_DELAY = 300;
 const refs = getRefs();
