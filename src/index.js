@@ -1,5 +1,5 @@
 import './css/styles.css';
-import API from './fetchCountries';
+import { fetchCountries } from './fetchCountries';
 import getRefs from './get-refs';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
@@ -21,7 +21,7 @@ function onSearch(event) {
     return;
   }
 
-  API.fetchCountries(searchQuery)
+  fetchCountries(searchQuery)
     .then(country => {
       if (country.length !== 1) {
         refs.countryInfoEl.innerHTML = '';
