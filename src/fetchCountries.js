@@ -1,5 +1,8 @@
 import Notiflix from 'notiflix';
-export { fetchCountries, onFetchError };
+import getRefs from './get-refs';
+export { fetchCountries, onFetchError, resetInnerHTML };
+
+const refs = getRefs();
 
 function fetchCountries(name) {
   const base_url = `https://restcountries.com/v3.1/name/${name}`;
@@ -7,7 +10,7 @@ function fetchCountries(name) {
   return fetch(base_url + filter_url)
     .then(response => {
       if (!response.ok) {
-       return onFetchError;
+        return onFetchError;
       }
       return response.json();
     })
@@ -15,5 +18,11 @@ function fetchCountries(name) {
 }
 
 function onFetchError(error) {
+  resetInnerHTML();
   Notiflix.Notify.failure('Oops, there is no country with that name');
+}
+
+function resetInnerHTML() {
+  refs.countryListEl.innerHTML = '';
+  refs.countryInfoEl.innerHTML = '';
 }
